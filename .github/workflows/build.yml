@@ -14,13 +14,24 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential fakeroot libssl-dev libplist-dev \
-            libxml2-dev libtinfo5 libncurses5 zlib1g-dev xz-utils git ldid
+            libxml2-dev libtinfo5 libncurses5 zlib1g-dev xz-utils git pkg-config \
+            libplist++-dev libedit-dev
+
 
       - name: 安装 Theos
         run: |
           export THEOS=$HOME/theos
           git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
           echo "THEOS=$THEOS" >> $GITHUB_ENV
+      - name: 编译 ldid(Ubuntu 仓库没有这个包)
+        run: |
+          git clone --depth 1 --recursive https://github.com/ProcursusTeam/ldid.git /tmp/ldid
+          cd /tmp/ldid
+          make -j"$(nproc)" CXXFLAGS="-I/usr/include" || make -j"$(nproc)"
+          ls -l ldid
+          mkdir -p "$HOME/theos/bin"
+          cp ldid "$HOME/theos/bin/ldid"
+          chmod +x "$HOME/theos/bin/ldid"
 
       - name: 准备 iOS SDK
         run: |

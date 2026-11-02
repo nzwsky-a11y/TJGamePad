@@ -1,0 +1,9 @@
+﻿*.m text eol=lf
+*.xm text eol=lf
+*.h text eol=lf
+Makefile text eol=lf
+control text eol=lf
+*.plist text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+.gitignore text eol=lf

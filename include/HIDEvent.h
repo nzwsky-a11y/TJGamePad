@@ -21,13 +21,21 @@ typedef struct __IOHIDEventService *IOHIDEventServiceRef;
 // ---------- 合成事件 ----------
 extern IOHIDEventSystemClientRef IOHIDEventSystemClientCreate(CFAllocatorRef);
 extern void IOHIDEventSystemClientDispatchEvent(IOHIDEventSystemClientRef, IOHIDEventRef);
-extern IOHIDEventRef IOHIDEventCreateDigitizerEvent(CFAllocatorRef, uint64_t, uint32_t, uint32_t,
-                                                    uint32_t, uint32_t, uint32_t, double, double,
-                                                    double, double, double, double, double, double,
-                                                    uint32_t);
-extern IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef, uint64_t, uint32_t,
-                                                          uint32_t, double, double, uint32_t,
-                                                          uint32_t, double, double, uint32_t);
+extern IOHIDEventRef IOHIDEventCreateDigitizerEvent(CFAllocatorRef allocator, uint64_t timeStamp,
+                                                    uint32_t transducerType, uint32_t index, uint32_t identity,
+                                                    uint32_t eventMask, uint32_t buttonMask,
+                                                    double x, double y, double z,
+                                                    double tipPressure, double barrelPressure,
+                                                    uint32_t range, uint32_t touch,
+                                                    uint32_t options, uint32_t senderID);
+
+extern IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator, uint64_t timeStamp,
+                                                          uint32_t index, uint32_t identity,
+                                                          double x, double y, double z,
+                                                          double tipPressure, double twist,
+                                                          uint32_t range, uint32_t touch,
+                                                          uint32_t options);
+
 extern void IOHIDEventAppendEvent(IOHIDEventRef, IOHIDEventRef, uint32_t);
 extern void IOHIDEventSetIntegerValue(IOHIDEventRef, uint32_t, int64_t);
 

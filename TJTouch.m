@@ -22,24 +22,34 @@ static IOHIDEventSystemClientRef gClient = NULL;
 
     uint64_t t = mach_absolute_time();
 
+    // 手事件:16 个参数,全部按 Apple 原型的顺序
     IOHIDEventRef hand = IOHIDEventCreateDigitizerEvent(
-        kCFAllocatorDefault, t,
-        3, 0, 0,
-        0, 0,
-        1,
-        0, 0,
-        0, 0, 0, 0,
-        0);
+        kCFAllocatorDefault,
+        t,                          // timeStamp
+        3,                          // transducerType: kIOHIDDigitizerTransducerTypeHand
+        0,                          // index
+        0,                          // identity
+        0,                          // eventMask
+        0,                          // buttonMask
+        0.0, 0.0, 0.0,              // x, y, z
+        0.0, 0.0,                   // tipPressure, barrelPressure
+        1,                          // range  = 在屏幕内
+        0,                          // touch
+        0,                          // options
+        0);                         // senderID
 
+    // 手指事件:12 个参数
     IOHIDEventRef f = IOHIDEventCreateDigitizerFingerEvent(
-        kCFAllocatorDefault, t,
-        finger,        // index
-        finger + 1,    // identity
-        p.x, p.y,
-        down ? 1 : 0,
-        1,
-        0, 0,
-        0);
+        kCFAllocatorDefault,
+        t,                          // timeStamp
+        finger,                     // index
+        finger + 1,                 // identity
+        p.x, p.y, 0.0,              // x, y, z
+        1.0,                        // tipPressure
+        0.0,                        // twist
+        1,                          // range
+        down ? 1 : 0,               // touch
+        0);                         // options
 
     IOHIDEventAppendEvent(hand, f, 0);
     IOHIDEventSetIntegerValue(hand, kFieldDigitizerIsDisplayIntegrated, 1);

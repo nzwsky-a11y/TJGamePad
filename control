@@ -1,0 +1,9 @@
+Package: com.example.tjgamepad
+Name: TJGamePad
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: 游戏厅复刻内核 —— 悬浮球 / 手搓速点区 / 键位自定义 / 多指触摸注入
+Maintainer: local
+Author: local
+Section: Tweaks
+Depends: firmware (>= 15.0), ellekit

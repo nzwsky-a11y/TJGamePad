@@ -10,48 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装依赖
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential fakeroot libssl-dev libplist-dev \
-            libxml2-dev libtinfo5 libncurses5 zlib1g-dev xz-utils git pkg-config \
-            libplist++-dev libedit-dev
-
-
-      - name: 安装 Theos
-        run: |
-          export THEOS=$HOME/theos
-          git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
-          echo "THEOS=$THEOS" >> $GITHUB_ENV
-      - name: 准备 ldid(优先自己编,失败就退化)
-        run: |
-          set +e
-          git clone --depth 1 --recursive https://github.com/ProcursusTeam/ldid.git /tmp/ldid
-          ( cd /tmp/ldid && make -j"$(nproc)" )
-          if [ -x /tmp/ldid/ldid ]; then
-            cp /tmp/ldid/ldid "$HOME/theos/bin/ldid" && echo "using built ldid"
-          else
-            printf '#!/bin/sh\nexit 0\n' > "$HOME/theos/bin/ldid" && echo "fallback: no-op ldid"
-          fi
-          chmod +x "$HOME/theos/bin/ldid"
-
-      - name: 准备 iOS SDK
-        run: |
-          mkdir -p "$THEOS/sdks"
-          # 源 1:theos 官方 sdks
-          git clone --depth 1 https://github.com/theos/sdks.git /tmp/sdks1 || true
-          if [ -d /tmp/sdks1 ]; then
-            find /tmp/sdks1 -maxdepth 1 -name "iPhoneOS*.sdk" -exec cp -r {} "$THEOS/sdks/" \; || true
-          fi
-          # 源 2:备选(国内常用 SDK 仓库)
-          if [ -z "$(ls -A "$THEOS/sdks" 2>/dev/null | grep iPhoneOS)" ]; then
-            git clone --depth 1 https://github.com/xybp888/iOS-SDKs.git /tmp/sdks2 || true
-            if [ -d /tmp/sdks2 ]; then
-              find /tmp/sdks2 -maxdepth 2 -name "iPhoneOS*.sdk" -exec cp -r {} "$THEOS/sdks/" \; || true
-            fi
-          fi
-          echo "=== sdks ==="
-          ls "$THEOS/sdks" || true
+      # 社区标准:自动装 Theos + Linux 工具链 + ldid + iOS SDK
+      - uses: Randomblock1/theos-action@v1
+        with:
+          theos-path: ${{ github.workspace }}/theos
 
       - name: 编译
         run: |
